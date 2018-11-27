@@ -47,14 +47,14 @@ android {
     }
 
     task cleanNative(type: Exec, description: 'Clean JNI object files') {
-        commandLine "C:\\Android\\sdk\\android-ndk-r18b\\ndk-build",
+        commandLine 'C:\\Android\\sdk\\android-ndk-r16b\\ndk-build.cmd',
                 '-C', file('src/main/jni').absolutePath,
                 'clean'
     }
     clean.dependsOn cleanNative
 
     task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
-        commandLine "C:\\Android\\sdk\\android-ndk-r18b\\ndk-build",
+        commandLine 'C:\\Android\\sdk\\android-ndk-r16b\\ndk-build.cmd',
                 '-C', file('src/main/jni').absolutePath,
                 '-j', Runtime.runtime.availableProcessors(),
                 'all'

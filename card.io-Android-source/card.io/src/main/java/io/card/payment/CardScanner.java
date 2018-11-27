@@ -89,8 +89,10 @@ public class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCall
     private int mUnblurDigits = DEFAULT_UNBLUR_DIGITS;
 
     // read by CardIOActivity to set up Preview
-    final int mPreviewWidth = 640;
-    final int mPreviewHeight = 480;
+    // final int mPreviewWidth = 640;
+    // final int mPreviewHeight = 480;
+    final int mPreviewWidth = 480;
+    final int mPreviewHeight = 640;
 
     private int mFrameOrientation = ORIENTATION_PORTRAIT;
 

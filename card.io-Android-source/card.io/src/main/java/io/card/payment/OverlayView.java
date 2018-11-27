@@ -77,7 +77,7 @@ class OverlayView extends View {
     private static final Orientation[] GRADIENT_ORIENTATIONS = { Orientation.TOP_BOTTOM,
             Orientation.LEFT_RIGHT, Orientation.BOTTOM_TOP, Orientation.RIGHT_LEFT };
 
-    private static final int GUIDE_STROKE_WIDTH = 17;
+    private static final int GUIDE_STROKE_WIDTH = 4;
 
     private static final float CORNER_RADIUS_SIZE = 1 / 15.0f;
 
@@ -270,9 +270,9 @@ class OverlayView extends View {
         mGradientDrawable.draw(canvas);
 
         if ((mRotation == 0) || (mRotation == 180)) {
-            tickLength = (mGuide.bottom - mGuide.top) / 4;
+            tickLength = (mGuide.bottom - mGuide.top) / 2;
         } else {
-            tickLength = (mGuide.right - mGuide.left) / 4;
+            tickLength = (mGuide.right - mGuide.left) / 2;
         }
 
         if (mDInfo != null && mDInfo.numVisibleEdges() == 4) {

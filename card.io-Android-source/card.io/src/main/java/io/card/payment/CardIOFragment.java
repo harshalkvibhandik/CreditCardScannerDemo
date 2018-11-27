@@ -283,7 +283,7 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
     private static final int PERMISSION_REQUEST_ID = 11;
 
     private OverlayView mOverlay;
-    private OrientationEventListener orientationListener;
+    //private OrientationEventListener orientationListener;
 
     // TODO: the preview is accessed by the scanner. Not the best practice.
     Preview mPreview;
@@ -318,7 +318,12 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
      */
     static Bitmap markedCardImage = null;
 
-    // ------------------------------------------------------------------------
+    private CardDetectionListener cardDetectionListener;
+
+    public void setCardDetectionListener(CardDetectionListener cardDetectionListener) {
+        this.cardDetectionListener = cardDetectionListener;
+    }
+// ------------------------------------------------------------------------
     // ACTIVITY LIFECYCLE
     // ------------------------------------------------------------------------
 
@@ -457,13 +462,13 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
 
             setPreviewLayout();
 
-            orientationListener = new OrientationEventListener(getActivity(),
+            /*orientationListener = new OrientationEventListener(getActivity(),
                     SensorManager.SENSOR_DELAY_UI) {
                 @Override
                 public void onOrientationChanged(int orientation) {
                     doOrientationChange(orientation);
                 }
-            };
+            };*/
 
         } catch (Exception e) {
             handleGeneralExceptionError(e);
@@ -539,9 +544,8 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
 
             Util.logNativeMemoryStats();
 
-
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            orientationListener.enable();
+            //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            //orientationListener.enable();
 
             if (!restartPreview()) {
                 Log.e(TAG, "Could not connect to camera.");
@@ -567,9 +571,9 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
     public void onPause() {
         super.onPause();
 
-        if (orientationListener != null) {
+        /*if (orientationListener != null) {
             orientationListener.disable();
-        }
+        }*/
         setFlashOn(false);
 
         if (mCardScanner != null) {
@@ -582,9 +586,9 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
         mOverlay = null;
         numActivityAllocations--;
 
-        if (orientationListener != null) {
+        /*if (orientationListener != null) {
             orientationListener.disable();
-        }
+        }*/
         setFlashOn(false);
 
         if (mCardScanner != null) {
@@ -696,6 +700,9 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
 
     public void onEdgeUpdate(DetectionInfo dInfo) {
         mOverlay.setDetectionInfo(dInfo);
+        if(cardDetectionListener != null) {
+            cardDetectionListener.onEdgeUpdate();
+        }
     }
 
     public void onCardDetected(Bitmap detectedBitmap, DetectionInfo dInfo) {
@@ -736,7 +743,10 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
     }
 
     private void displayBitmap(DetectionInfo dInfo) {
-        Toast.makeText(getActivity(), dInfo.detectedCard.cardNumber, Toast.LENGTH_SHORT).show();
+        if(cardDetectionListener != null) {
+            cardDetectionListener.onCardDetected(dInfo.detectedCard);
+        }
+//        Toast.makeText(getActivity(), dInfo.detectedCard.cardNumber, Toast.LENGTH_SHORT).show();
 //        ByteArrayOutputStream scaledCardBytes = new ByteArrayOutputStream();
 //        mOverlay.getBitmap().compress(Bitmap.CompressFormat.JPEG, 80, scaledCardBytes);
     }
@@ -776,8 +786,8 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
         mGuideFrame = mCardScanner.getGuideFrame(sv.getWidth(), sv.getHeight());
 
         // adjust for surface view y offset
-        mGuideFrame.top += sv.getTop();
-        mGuideFrame.bottom += sv.getTop();
+        mGuideFrame.top += sv.getTop() - 140;
+        mGuideFrame.bottom += sv.getTop() + 140;
         mOverlay.setGuideAndRotation(mGuideFrame, degrees);
         mLastDegrees = degrees;
     }
@@ -818,7 +828,8 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
                 LayoutParams.MATCH_PARENT, Gravity.TOP));
         previewFrame.addView(mPreview);
 
-        mOverlay = new OverlayView(getActivity(), this, null, Util.deviceSupportsTorch(getActivity()));
+        //mOverlay = new OverlayView(getActivity(), this, null, Util.deviceSupportsTorch(getActivity()));
+        mOverlay = new OverlayView(getActivity(), this, null, false);
         mOverlay.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT));
         if (getArguments() != null) {
@@ -918,5 +929,9 @@ public final class CardIOFragment extends Fragment implements CardIOScanDetectio
         return mOverlay.getTorchRect();
     }
 
+    public interface CardDetectionListener {
+        void onEdgeUpdate();
+        void onCardDetected(CreditCard detectedCard);
+    }
 }
 
