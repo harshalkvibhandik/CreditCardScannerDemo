@@ -20,7 +20,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,6 +27,7 @@ import java.lang.ref.WeakReference;
 
 import io.card.payment.i18n.LocalizedStrings;
 import io.card.payment.i18n.StringKey;
+import io.card.payment.interfaces.CardIOCameraControl;
 
 /**
  * This class implements a transparent overlay that is drawn over the raw camera capture frames.
@@ -66,7 +66,7 @@ import io.card.payment.i18n.StringKey;
  * independent of screen scale.
  * <p/>
  */
-class OverlayView extends View {
+public class OverlayView extends View {
     private static final String TAG = OverlayView.class.getSimpleName();
 
     private static final float GUIDE_FONT_SIZE = 26.0f;
@@ -119,7 +119,7 @@ class OverlayView extends View {
         super(activity, attributeSet);
 
         mShowTorch = showTorch;
-        mScanActivityRef = new WeakReference<CardIOCameraControl>(cameraControl);
+        mScanActivityRef = new WeakReference(cameraControl);
 
         mRotationFlip = 1;
 
@@ -270,9 +270,9 @@ class OverlayView extends View {
         mGradientDrawable.draw(canvas);
 
         if ((mRotation == 0) || (mRotation == 180)) {
-            tickLength = (mGuide.bottom - mGuide.top) / 2;
+            tickLength = (mGuide.bottom - mGuide.top) / 4;
         } else {
-            tickLength = (mGuide.right - mGuide.left) / 2;
+            tickLength = (mGuide.right - mGuide.left) / 4;
         }
 
         if (mDInfo != null && mDInfo.numVisibleEdges() == 4) {
@@ -406,8 +406,8 @@ class OverlayView extends View {
         } catch (NullPointerException e) {
             // Un-reproducible NPE reported on device without flash where flash detected and flash
             // button pressed (see https://github.com/paypal/PayPal-Android-SDK/issues/27)
-            Log.d(TAG, "NullPointerException caught in onTouchEvent method");
         }
+
         return false;
     }
 

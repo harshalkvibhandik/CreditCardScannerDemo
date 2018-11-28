@@ -1,4 +1,4 @@
-package com.nmp90.cardiofragment;
+package com.hsbc.creditcardscannerdemo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.nmp90.cardiofragment", appContext.getPackageName());
+        assertEquals("com.hsbc.creditcardscannerdemo", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package com.nmp90.cardiofragment;
+package com.hsbc.creditcardscannerdemo;
 
 import org.junit.Test;
 
